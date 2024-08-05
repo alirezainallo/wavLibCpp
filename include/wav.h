@@ -6,7 +6,7 @@ enum {
 	WAV_DEVICE_PC_CPP = 0,     //0 //WAV_DEVICE_PC_CPP
 	WAV_DEVICE_SIPEED_CPP = 1, //1 //WAV_DEVICE_SIPEED_CPP
 };
-#define WAV_DEVICE 0 //WAV_DEVICE_PC_CPP
+#define WAV_DEVICE 1 //WAV_DEVICE_SIPEED_CPP
 
 
 #include <stdio.h>
