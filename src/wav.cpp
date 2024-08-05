@@ -342,7 +342,7 @@ void wav_readFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, uint32
 		wav_printf("cannot open hWav->wavFile : %s\n", hWav->fileName);
 	}
 	#elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
-	hWav->file = SD.open(hWav->fileName, O_WRITE | O_CREAT);
+	hWav->file = SD.open(wavName, O_WRITE | O_CREAT);
 	#endif //WAV_DEVICE
 
 	// fill header

@@ -17,6 +17,7 @@ enum {
 #include <stdbool.h>
 #elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
 #include <Arduino.h>
+// #include "main.h"
 #include <SD.h>
 #endif //WAV_DEVICE
 
