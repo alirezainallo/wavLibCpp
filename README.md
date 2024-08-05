@@ -8,10 +8,10 @@ A wav handler library for PlatformIO.
 <h7>Use this command:</h7><br>
 
 ```
-    git submodule add https://github.com/alirezainallo/wavCpp.git ./lib/wavCpp
+    git submodule add https://github.com/alirezainallo/wavLibCpp ./lib/wav
 ```
 <h7>Use this line in platformio.ini:</h7><br>
 <pre>
     lib_deps =
-        wavCpp
+        wav
 </pre>
