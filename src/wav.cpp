@@ -310,6 +310,7 @@ void wav_readFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) {
 	#endif //WAV_DEVICE
 	wav_fillHeader(&(hWav->header));
 	if(needPrintDetails){
+		wav_printf("[wav] ----------------------------------------------\n");
 		wav_printHeader(&(hWav->header));
 	}
 
@@ -325,6 +326,7 @@ void wav_readFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) {
 	
 	if(needPrintDetails){
 		wav_printf("file_size           : %d\n", file_size);
+		wav_printf("----------------------------------------------------\n");
 	}
 }
 void wav_readFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails) {
