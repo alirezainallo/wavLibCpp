@@ -299,7 +299,7 @@ void wav_readFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) {
 		wav_printf("cannot open hWav->wavFile : %s\n", hWav->fileName);
 	}
 	#elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
-	hWav->file = SD.open(hWav->fileName, O_READ);
+	hWav->file = SD.open(wavName, O_READ);
 	#endif //WAV_DEVICE
 
 	// read header
