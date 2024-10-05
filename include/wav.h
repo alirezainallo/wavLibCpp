@@ -6,7 +6,7 @@ enum {
 	WAV_DEVICE_PC_CPP = 0,     //0 //WAV_DEVICE_PC_CPP
 	WAV_DEVICE_SIPEED_CPP = 1, //1 //WAV_DEVICE_SIPEED_CPP
 };
-#define WAV_DEVICE 0 //WAV_DEVICE_PC_CPP
+#define WAV_DEVICE 1 //WAV_DEVICE_SIPEED_CPP
 
 
 #include <stdio.h>
@@ -17,7 +17,7 @@ enum {
 #include <stdbool.h>
 #elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
 #include <Arduino.h>
-#include "main.h"
+// #include "main.h"
 #include <SD.h>
 #endif //WAV_DEVICE
 
@@ -27,7 +27,7 @@ enum {
 #define FILENAME_MAX_LEN FILENAME_MAX + 4 /* 4 = strlen(".wav")*/
 #define wav_printf printf
 #elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
-#define FILENAME_MAX_LEN RECORD_FILE_NAME_LEN //8 + 4  // 4 = strlen(".wav")
+#define FILENAME_MAX_LEN 12 //8 + 4  // 4 = strlen(".wav")
 #define wav_printf Serial.printf
 #endif //WAV_DEVICE
 #define WAV_WRITE_APPEND UINT32_MAX
