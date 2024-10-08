@@ -45,9 +45,8 @@ enum {
 #elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
 #define FILENAME_MAX_LEN _MAX_LFN
 extern myTxQueueHandle_t hQ;
-#define wav_printf(...) myTxQueue_printf(&hQ, __VA_ARGS__) 
 #endif //WAV_DEVICE
-#define WAV_WRITE_APPEND UINT32_MAX
+#define WAV_WRITE_APPEND 10
 
 #pragma pack(push, 1)
 typedef enum {

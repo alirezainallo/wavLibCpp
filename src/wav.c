@@ -9,6 +9,15 @@ const char WAV_HEADER_STR_FMT [5] = "fmt ";
 const char WAV_HEADER_STR_DATA[5] = "data";
 const char WAV_HEADER_STR_FACT[5] = "fact";
 
+#if  WAV_DEVICE == 2 //WAV_DEVICE_STM32
+void wav_printf(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    // Forward all arguments to myTxQueue_printf
+    myTxQueue_printf(&hQ, format, args);
+    va_end(args);
+}
+#endif //WAV_DEVICE
 
 float wav_normalizeInt16ToFloat(int16_t x) {
 	return x < 0 ? x / (float)(32768) : x / (float)(32767);
