@@ -3,10 +3,11 @@
 
 
 enum {
-	WAV_DEVICE_PC_CPP = 0,     //0 //WAV_DEVICE_PC_CPP
+	WAV_DEVICE_PC_CPP     = 0, //0 //WAV_DEVICE_PC_CPP
 	WAV_DEVICE_SIPEED_CPP = 1, //1 //WAV_DEVICE_SIPEED_CPP
+	WAV_DEVICE_STM32      = 2, //2 //WAV_DEVICE_STM32
 };
-#define WAV_DEVICE 0 //WAV_DEVICE_PC_CPP
+#define WAV_DEVICE 2 //WAV_DEVICE_STM32
 
 
 #include <stdio.h>
@@ -19,6 +20,18 @@ enum {
 #include <Arduino.h>
 // #include "main.h"
 #include <SD.h>
+#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
+#include <string.h>
+#include <stdint.h>
+#include "main.h"
+#include "dma.h"
+#include "fatfs.h"
+#include "i2c.h"
+#include "i2s.h"
+#include "sdio.h"
+#include "usart.h"
+#include "gpio.h"
+#include "myTxQueue.h"
 #endif //WAV_DEVICE
 
 
@@ -29,6 +42,10 @@ enum {
 #elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
 #define FILENAME_MAX_LEN 12 //8 + 4  // 4 = strlen(".wav")
 #define wav_printf Serial.printf
+#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
+#define FILENAME_MAX_LEN _MAX_LFN
+extern myTxQueueHandle_t hQ;
+#define wav_printf(...) myTxQueue_printf(&hQ, __VA_ARGS__) 
 #endif //WAV_DEVICE
 #define WAV_WRITE_APPEND UINT32_MAX
 
@@ -139,6 +156,8 @@ typedef struct _wav_handle_tag {
 	FILE* file;
 	#elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
 	SDLib::File file;
+	#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
+	FIL SDFile;
 	#endif //WAV_DEVICE
 	wav_handle_mode_t RorW;
 }wav_handle_t;
