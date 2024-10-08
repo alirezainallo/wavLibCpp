@@ -9,15 +9,15 @@ const char WAV_HEADER_STR_FMT [5] = "fmt ";
 const char WAV_HEADER_STR_DATA[5] = "data";
 const char WAV_HEADER_STR_FACT[5] = "fact";
 
-#if  WAV_DEVICE == 2 //WAV_DEVICE_STM32
-void wav_printf(const char *format, ...) {
-    va_list args;
-    va_start(args, format);
-    // Forward all arguments to myTxQueue_printf
-    myTxQueue_printf(&hQ, format, args);
-    va_end(args);
-}
-#endif //WAV_DEVICE
+// #if  WAV_DEVICE == 2 //WAV_DEVICE_STM32
+// void wav_printf(const char *format, ...) {
+//     va_list args;
+//     va_start(args, format);
+//     // Forward all arguments to myTxQueue_printf
+//     myTxQueue_printf(&hQ, format, args);
+//     va_end(args);
+// }
+// #endif //WAV_DEVICE
 
 float wav_normalizeInt16ToFloat(int16_t x) {
 	return x < 0 ? x / (float)(32768) : x / (float)(32767);
@@ -346,12 +346,13 @@ void wav_openReadFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) 
 		wav_printf("----------------------------------------------------\n");
 	}
 }
-void wav_openWriteFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails) {
+void wav_openWriteFile(wav_handle_t *hWav, const char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails) {
 	
 	hWav->RorW = WAV_WRITER;
 
 	// copy file name
-	strncpy(hWav->fileName, wavName, FILENAME_MAX_LEN);
+	//strncpy(hWav->fileName, wavName, FILENAME_MAX_LEN);
+	strcpy(hWav->fileName, wavName);
 
 	// open file
 	#if    WAV_DEVICE == 0 //WAV_DEVICE_PC_CPP
@@ -363,7 +364,11 @@ void wav_openWriteFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, u
 	#elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
 	hWav->file = SD.open(wavName, O_WRITE | O_CREAT);
 	#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
-	f_open(&hWav->SDFile, wavName, FA_CREATE_NEW | FA_WRITE);
+	FRESULT res = f_open(&hWav->SDFile, wavName, FA_WRITE | FA_CREATE_ALWAYS);
+	if (res != FR_OK){
+		//HAL_UART_Transmit(&huart1, wavName, strlen(wavName), 10);
+		printf("cannot open hWav->wavFile : %s, %d\n", wavName, (uint32_t)res);
+	}
 	#endif //WAV_DEVICE
 
 	// fill header
@@ -379,7 +384,7 @@ void wav_openWriteFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, u
 	writtenByte = (uint32_t)hWav->file.write(hWav->header.head.buffer, hWav->header.headerSize);
 	#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
 	UINT bytLeft = 0;
-	f_write(&SDFile, hWav->header.head.buffer, (UINT)hWav->header.headerSize, &bytLeft);
+	f_write(&hWav->SDFile, hWav->header.head.buffer, (UINT)hWav->header.headerSize, &bytLeft);
 	HAL_Delay(5);
 	writtenByte = (uint32_t)bytLeft;
 	#endif //WAV_DEVICE
@@ -613,7 +618,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
-		f_write(&SDFile, wavMulti.chunk1ch, (UINT)((size_t)len * (size_t)sizeof(data_1_channel)), &bytLeft);
+		f_write(&hWav->SDFile, wavMulti.chunk1ch, (UINT)((size_t)len * (size_t)sizeof(data_1_channel)), &bytLeft);
 		HAL_Delay(10);
 		writeSampleChunks = (uint32_t)bytLeft;
 		if (writeSampleChunks != (len * sizeof(data_1_channel))) {
@@ -634,7 +639,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
-		f_write(&SDFile, wavMulti.chunk2ch, (UINT)((size_t)len * (size_t)sizeof(data_2_channel)), &bytLeft);
+		f_write(&hWav->SDFile, wavMulti.chunk2ch, (UINT)((size_t)len * (size_t)sizeof(data_2_channel)), &bytLeft);
 		HAL_Delay(10);
 		writeSampleChunks = (uint32_t)bytLeft;
 		if (writeSampleChunks != (len * sizeof(data_2_channel))) {
@@ -655,7 +660,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
-		f_write(&SDFile, wavMulti.chunk4ch, (UINT)((size_t)len * (size_t)sizeof(data_4_channel)), &bytLeft);
+		f_write(&hWav->SDFile, wavMulti.chunk4ch, (UINT)((size_t)len * (size_t)sizeof(data_4_channel)), &bytLeft);
 		HAL_Delay(10);
 		writeSampleChunks = (uint32_t)bytLeft;
 		if (writeSampleChunks != (len * sizeof(data_4_channel))) {
@@ -676,7 +681,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
-		f_write(&SDFile, wavMulti.chunk8ch, (UINT)((size_t)len * (size_t)sizeof(data_8_channel)), &bytLeft);
+		f_write(&hWav->SDFile, wavMulti.chunk8ch, (UINT)((size_t)len * (size_t)sizeof(data_8_channel)), &bytLeft);
 		HAL_Delay(10);
 		writeSampleChunks = (uint32_t)bytLeft;
 		if (writeSampleChunks != (len * sizeof(data_8_channel))) {
@@ -697,7 +702,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
-		f_write(&SDFile, wavMulti.chunk16ch, (UINT)((size_t)len * (size_t)sizeof(data_16_channel)), &bytLeft);
+		f_write(&hWav->SDFile, wavMulti.chunk16ch, (UINT)((size_t)len * (size_t)sizeof(data_16_channel)), &bytLeft);
 		HAL_Delay(10);
 		writeSampleChunks = (uint32_t)bytLeft;
 		if (writeSampleChunks != (len * sizeof(data_16_channel))) {
@@ -715,7 +720,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 	#elif  WAV_DEVICE == 1 //WAV_DEVICE_SIPEED_CPP
 	hWav->file.flush();
 	#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
-	// f_flu(&SDFile);
+	// f_flu(&hWav->SDFile);
 	#endif //WAV_DEVICE
 
 }
@@ -782,7 +787,7 @@ void wav_close(wav_handle_t* hWav) {
 		writtenByte = (uint32_t)hWav->file.write(hWav->header.head.buffer, hWav->header.headerSize);
 		#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
 		UINT bytLeft = 0;
-		f_write(&SDFile, hWav->header.head.buffer, (UINT)hWav->header.headerSize, &bytLeft);
+		f_write(&hWav->SDFile, hWav->header.head.buffer, (UINT)hWav->header.headerSize, &bytLeft);
 		HAL_Delay(10);
 		writtenByte = (uint32_t)bytLeft;
 		#endif //WAV_DEVICE

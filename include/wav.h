@@ -44,9 +44,10 @@ enum {
 #define wav_printf Serial.printf
 #elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
 #define FILENAME_MAX_LEN _MAX_LFN
-extern myTxQueueHandle_t hQ;
+// extern myTxQueueHandle_t hQ;
+#define wav_printf printf
 #endif //WAV_DEVICE
-#define WAV_WRITE_APPEND 10
+#define WAV_WRITE_APPEND UINT32_MAX
 
 #pragma pack(push, 1)
 typedef enum {
@@ -194,7 +195,7 @@ void wav_openReadFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails);
  * @param standard from 'wav_header_standard_t'
  * @param needPrintDetails 
  */
-void wav_openWriteFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails);
+void wav_openWriteFile(wav_handle_t *hWav, const char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails);
 
 /**
  * @brief 
