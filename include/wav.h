@@ -182,7 +182,7 @@ typedef union _data_multi_channel_tag {
  * @param wavName 
  * @param needPrintDetails 
  */
-void wav_readFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails);
+void wav_openReadFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails);
 
 /**
  * @brief use for open and creat wav for write mode
@@ -194,7 +194,7 @@ void wav_readFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails);
  * @param standard from 'wav_header_standard_t'
  * @param needPrintDetails 
  */
-void wav_readFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails);
+void wav_openWriteFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails);
 
 /**
  * @brief 
@@ -218,7 +218,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 float wav_normalizeInt16ToFloat(int16_t x);
 uint32_t wav_getDetails(wav_header_t* header, wav_header_item_t item);
 void wav_printHeader(wav_header_t* header);
-void wav_fillHeader(wav_header_t* header);
+void wav_refillHeader(wav_header_t* header);
 
 /**
  * @brief close after wav file works

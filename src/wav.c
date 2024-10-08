@@ -22,7 +22,7 @@ void wav_printf(const char *format, ...) {
 float wav_normalizeInt16ToFloat(int16_t x) {
 	return x < 0 ? x / (float)(32768) : x / (float)(32767);
 }
-void wav_fillHeader(wav_header_t* header) {
+void wav_refillHeader(wav_header_t* header) {
 	if (header->head.pcm.fmt_chunk_size == 16) {
 		header->standard   = WAV_PCM_DATA;
 		header->headerSize = sizeof(wav_header_pcm_t);
@@ -293,7 +293,7 @@ void wav_printHeader(wav_header_t* header) {
 		break;
 	}
 }
-void wav_readFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) {
+void wav_openReadFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) {
 	
 	hWav->RorW = WAV_READER;
 
@@ -322,7 +322,7 @@ void wav_readFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) {
 	UINT br;
 	f_read(&hWav->SDFile, (void*)(hWav->header.head.buffer), (UINT)sizeof(wav_header_non_pcm_fact_t), &br);(void)br;
 	#endif //WAV_DEVICE
-	wav_fillHeader(&(hWav->header));
+	wav_refillHeader(&(hWav->header));
 	if(needPrintDetails){
 		wav_printf("[wav] ----------------------------------------------\n");
 		wav_printHeader(&(hWav->header));
@@ -346,7 +346,7 @@ void wav_readFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) {
 		wav_printf("----------------------------------------------------\n");
 	}
 }
-void wav_readFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails) {
+void wav_openWriteFile(wav_handle_t *hWav, char *wavName, uint32_t sampleRate, uint32_t numOfChannel, wav_header_standard_t standard, bool needPrintDetails) {
 	
 	hWav->RorW = WAV_WRITER;
 

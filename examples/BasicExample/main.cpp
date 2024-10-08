@@ -23,7 +23,7 @@ int main(void) {
 
 	printf("Starting...\n");
 
-	wav_readFile(&hWav, mmWavName, true);
+	wav_openReadFile(&hWav, mmWavName, true);
 	uint32_t sampleRate   = wav_getDetails(&(hWav.header), WAV_SAMPLE_RATE);
 	uint32_t numOfChannel = wav_getDetails(&(hWav.header), WAV_CHANNELS);
 	uint32_t numOfSamplePerChannel = wav_getDetails(&(hWav.header), WAV_SAMPLE_PER_CHANNEL);
@@ -43,7 +43,7 @@ int main(void) {
 
 	
 	//Write 
-	wav_readFile(&hWav, (char*)"out.wav", sampleRate, numOfChannel, WAV_PCM_DATA, true);
+	wav_openWriteFile(&hWav, (char*)"out.wav", sampleRate, numOfChannel, WAV_PCM_DATA, true);
 	wav_WriteSample(&hWav, 0, numOfSamplePerChannel, (void**)wavBufMM);
 	wav_close(&hWav);
 	return 0;
