@@ -7,7 +7,7 @@ enum {
 	WAV_DEVICE_SIPEED_CPP = 1, //1 //WAV_DEVICE_SIPEED_CPP
 	WAV_DEVICE_STM32      = 2, //2 //WAV_DEVICE_STM32
 };
-#define WAV_DEVICE 2 //WAV_DEVICE_STM32
+#define WAV_DEVICE 0 //WAV_DEVICE_PC_CPP
 
 
 #include <stdio.h>
