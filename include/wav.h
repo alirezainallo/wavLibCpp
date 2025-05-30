@@ -6,8 +6,9 @@ enum {
 	WAV_DEVICE_PC_CPP     = 0, //0 //WAV_DEVICE_PC_CPP
 	WAV_DEVICE_SIPEED_CPP = 1, //1 //WAV_DEVICE_SIPEED_CPP
 	WAV_DEVICE_STM32      = 2, //2 //WAV_DEVICE_STM32
+	WAV_DEVICE_Arduino    = 3, //3 //WAV_DEVICE_Arduino
 };
-#define WAV_DEVICE 0 //WAV_DEVICE_PC_CPP
+#define WAV_DEVICE 3 //WAV_DEVICE_Arduino
 
 
 #include <stdio.h>
@@ -32,6 +33,9 @@ enum {
 #include "usart.h"
 #include "gpio.h"
 #include "myTxQueue.h"
+#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
+#include <Arduino.h>
+#include <SD.h>
 #endif //WAV_DEVICE
 
 
@@ -46,6 +50,9 @@ enum {
 #define FILENAME_MAX_LEN _MAX_LFN
 // extern myTxQueueHandle_t hQ;
 #define wav_printf printf
+#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
+#define FILENAME_MAX_LEN FILENAME_MAX + 4 /* 4 = strlen(".wav")*/
+#define wav_printf Serial.printf
 #endif //WAV_DEVICE
 #define WAV_WRITE_APPEND UINT32_MAX
 
@@ -158,7 +165,9 @@ typedef struct _wav_handle_tag {
 	SDLib::File file;
 	#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
 	FIL SDFile;
-	#endif //WAV_DEVICE
+	#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
+	SDLib::File file;
+#endif //WAV_DEVICE
 	wav_handle_mode_t RorW;
 }wav_handle_t;
 
