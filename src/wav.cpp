@@ -312,7 +312,7 @@ void wav_openReadFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) 
 	#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
 	f_open(&hWav->SDFile, wavName, FA_READ);
 	#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-	hWav->file = SD.open(wavName, O_READ);
+	hWav->file = SD.open(wavName, "rb+");
 	#endif //WAV_DEVICE
 
 	// read header
@@ -324,7 +324,7 @@ void wav_openReadFile(wav_handle_t *hWav, char *wavName, bool needPrintDetails) 
 	uint32_t br;
 	f_read(&hWav->SDFile, (void*)(hWav->header.head.buffer), (UINT)sizeof(wav_header_non_pcm_fact_t), &br);(void)br;
 	#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-	hWav->file.read((void*)(hWav->header.head.buffer), (uint32_t)sizeof(wav_header_non_pcm_fact_t));
+	hWav->file.read(hWav->header.head.buffer, sizeof(wav_header_non_pcm_fact_t));
 	#endif //WAV_DEVICE
 	wav_refillHeader(&(hWav->header));
 	if(needPrintDetails){
@@ -377,7 +377,7 @@ void wav_openWriteFile(wav_handle_t *hWav, const char *wavName, uint32_t sampleR
 		printf("cannot open hWav->wavFile : %s, %d\n", wavName, (uint32_t)res);
 	}
 	#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-	hWav->file = SD.open(wavName, O_WRITE | O_CREAT);
+	hWav->file = SD.open(wavName, "wb+");
 	#endif //WAV_DEVICE
 
 	// fill header
@@ -486,7 +486,7 @@ void wav_readSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void **
 			wav_printf("readSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		readSampleChunks = (uint32_t)hWav->file.read((void*)(wavMulti.chunk1ch), len * (uint32_t)sizeof(data_1_channel));
+		readSampleChunks = (uint32_t)hWav->file.read((uint8_t*)(wavMulti.chunk1ch), len * (uint32_t)sizeof(data_1_channel));
 		if (readSampleChunks != (len * sizeof(data_1_channel))) {
 			wav_printf("readSamples failed\n");
 		}
@@ -512,7 +512,7 @@ void wav_readSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void **
 			wav_printf("readSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		readSampleChunks = (uint32_t)hWav->file.read((void*)(wavMulti.chunk2ch), len * (uint32_t)sizeof(data_2_channel));
+		readSampleChunks = (uint32_t)hWav->file.read((uint8_t*)(wavMulti.chunk2ch), len * (uint32_t)sizeof(data_2_channel));
 		if (readSampleChunks != (len * sizeof(data_2_channel))) {
 			wav_printf("readSamples failed\n");
 		}
@@ -538,7 +538,7 @@ void wav_readSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void **
 			wav_printf("readSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		readSampleChunks = (uint32_t)hWav->file.read((void*)(wavMulti.chunk4ch), len * (uint32_t)sizeof(data_4_channel));
+		readSampleChunks = (uint32_t)hWav->file.read((uint8_t*)(wavMulti.chunk4ch), len * (uint32_t)sizeof(data_4_channel));
 		if (readSampleChunks != (len * sizeof(data_4_channel))) {
 			wav_printf("readSamples failed\n");
 		}
@@ -564,7 +564,7 @@ void wav_readSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void **
 			wav_printf("readSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		readSampleChunks = (uint32_t)hWav->file.read((void*)(wavMulti.chunk8ch), len * (uint32_t)sizeof(data_8_channel));
+		readSampleChunks = (uint32_t)hWav->file.read((uint8_t*)(wavMulti.chunk8ch), len * (uint32_t)sizeof(data_8_channel));
 		if (readSampleChunks != (len * sizeof(data_8_channel))) {
 			wav_printf("readSamples failed\n");
 		}
@@ -590,7 +590,7 @@ void wav_readSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void **
 			wav_printf("readSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		readSampleChunks = (uint32_t)hWav->file.read((void*)(wavMulti.chunk16ch), len * (uint32_t)sizeof(data_16_channel));
+		readSampleChunks = (uint32_t)hWav->file.read((uint8_t*)(wavMulti.chunk16ch), len * (uint32_t)sizeof(data_16_channel));
 		if (readSampleChunks != (len * sizeof(data_16_channel))) {
 			wav_printf("readSamples failed\n");
 		}
@@ -671,7 +671,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		writeSampleChunks = (uint32_t)hWav->file.write((const char*)(wavMulti.chunk1ch), (size_t)len * (size_t)sizeof(data_1_channel));
+		writeSampleChunks = (uint32_t)hWav->file.write((const uint8_t *)(wavMulti.chunk1ch), (size_t)len * (size_t)sizeof(data_1_channel));
 		if (writeSampleChunks != (len * sizeof(data_1_channel))) {
 			wav_printf("writeSamples failed\n");
 		}
@@ -697,7 +697,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		writeSampleChunks = (uint32_t)hWav->file.write((const char*)(wavMulti.chunk2ch), (size_t)len * (size_t)sizeof(data_2_channel));
+		writeSampleChunks = (uint32_t)hWav->file.write((const uint8_t *)(wavMulti.chunk2ch), (size_t)len * (size_t)sizeof(data_2_channel));
 		if (writeSampleChunks != (len * sizeof(data_2_channel))) {
 			wav_printf("writeSamples failed\n");
 		}
@@ -723,7 +723,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		writeSampleChunks = (uint32_t)hWav->file.write((const char*)(wavMulti.chunk4ch), (size_t)len * (size_t)sizeof(data_4_channel));
+		writeSampleChunks = (uint32_t)hWav->file.write((const uint8_t *)(wavMulti.chunk4ch), (size_t)len * (size_t)sizeof(data_4_channel));
 		if (writeSampleChunks != (len * sizeof(data_4_channel))) {
 			wav_printf("writeSamples failed\n");
 		}
@@ -749,7 +749,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		writeSampleChunks = (uint32_t)hWav->file.write((const char*)(wavMulti.chunk8ch), (size_t)len * (size_t)sizeof(data_8_channel));
+		writeSampleChunks = (uint32_t)hWav->file.write((const uint8_t *)(wavMulti.chunk8ch), (size_t)len * (size_t)sizeof(data_8_channel));
 		if (writeSampleChunks != (len * sizeof(data_8_channel))) {
 			wav_printf("writeSamples failed\n");
 		}
@@ -775,7 +775,7 @@ void wav_WriteSample(wav_handle_t *hWav, uint32_t StartInd, uint32_t len, void *
 			wav_printf("writeSamples failed\n");
 		}
 		#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-		writeSampleChunks = (uint32_t)hWav->file.write((const char*)(wavMulti.chunk16ch), (size_t)len * (size_t)sizeof(data_16_channel));
+		writeSampleChunks = (uint32_t)hWav->file.write((const uint8_t *)(wavMulti.chunk16ch), (size_t)len * (size_t)sizeof(data_16_channel));
 		if (writeSampleChunks != (len * sizeof(data_16_channel))) {
 			wav_printf("writeSamples failed\n");
 		}

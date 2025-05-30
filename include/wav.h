@@ -36,6 +36,7 @@ enum {
 #elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
 #include <Arduino.h>
 #include <SD.h>
+using fs::File;
 #endif //WAV_DEVICE
 
 
@@ -166,7 +167,7 @@ typedef struct _wav_handle_tag {
 	#elif  WAV_DEVICE == 2 //WAV_DEVICE_STM32
 	FIL SDFile;
 	#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-	SDLib::File file;
+	File file;
 #endif //WAV_DEVICE
 	wav_handle_mode_t RorW;
 }wav_handle_t;
