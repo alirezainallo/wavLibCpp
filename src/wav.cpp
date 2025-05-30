@@ -812,7 +812,10 @@ void wav_close(wav_handle_t* hWav) {
 	f_lseek(&hWav->SDFile, 0);
 	uint32_t file_size = (uint32_t)f_size(&(hWav->SDFile));
 	#elif  WAV_DEVICE == 3 //WAV_DEVICE_Arduino
-	hWav->file.seek(0);
+	hWav->file.close();
+	Serial.printf("[WAVLIB] file reopen: %s\n", hWav->fileName);
+	hWav->file = SD.open(hWav->fileName,"rb+");
+	hWav->file.seek(0, SeekSet);
 	uint32_t file_size = hWav->file.size();
 	#endif //WAV_DEVICE
 
