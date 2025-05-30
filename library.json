@@ -1,6 +1,6 @@
 {
     "name": "wav",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A wav handler library for PlatformIO.",
     "keywords": "template, example",
     "repository": {
